@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy-backend:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,9 +26,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ runner.tool_cache }}/node/${{ env.NODE_VERSION }}
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ env.GENEZIO_LATEST_RELEASE }}-genezio-binary
+          key: ${{ runner.os }}-node-${{ env.NODE_VERSION }}-genezio-${{ env.GENEZIO_LATEST_RELEASE }}-genezio-binary
           restore-keys: |
-            ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ env.GENEZIO_LATEST_RELEASE }}-genezio-binary
+            ${{ runner.os }}-node-${{ env.NODE_VERSION }}-genezio-${{ env.GENEZIO_LATEST_RELEASE }}-genezio-binary
 
 
       - uses: Genez-io/genezio-github-action@v2

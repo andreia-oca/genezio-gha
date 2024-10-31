@@ -9,7 +9,7 @@ on:
         default: 'main'
 
 jobs:
-  say_hello:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -24,7 +24,7 @@ jobs:
       - name: Get latest commit sha from github.event.inputs.genezio-branch
         run: echo "GENEZIO_LATEST_COMMIT_SHA=$(curl -s https://api.github.com/repos/genez-io/genezio/commits/${{ github.event.inputs.genezio-branch }} | jq -r '.sha')" >> $GITHUB_ENV
 
-      - name: Cache npm binaries to avoid rebuilding genezio
+      - name: Cache genezio binaries to avoid rebuilding genezio
         id: cache-genezio-binary
         uses: actions/cache@v4
         with:
@@ -32,6 +32,16 @@ jobs:
             key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ env.GENEZIO_LATEST_COMMIT_SHA }}-genezio-binary
             restore-keys: |
                 ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ env.GENEZIO_LATEST_COMMIT_SHA }}-genezio-binary
+
+      - name: Cache genezio sources to avoid rebuilding genezio
+        id: cache-genezio-sources
+        uses: actions/cache@v4
+        with:
+            path: genezio
+            key: ${{ runner.os }}-${{ env.GENEZIO_LATEST_COMMIT_SHA }}-genezio-sources
+            restore-keys: |
+                ${{ runner.os }}-${{ env.GENEZIO_LATEST_COMMIT_SHA }}-genezio-source
+
 
       - name: Fetch genezio from repository
         if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
@@ -42,6 +52,7 @@ jobs:
           path: genezio
 
       - name: Build genezio
+        if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
         working-directory: genezio
         run: |
           npm install
@@ -50,7 +61,7 @@ jobs:
       - name: Investigate
         run: which genezio
 
-      - name: Login with geneziobot
+      - name: Login with genezio
         run: genezio login ${{ secrets.GENEZIO_TOKEN }}
 
       - name: Deploy
