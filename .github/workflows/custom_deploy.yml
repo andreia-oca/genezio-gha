@@ -31,7 +31,7 @@ jobs:
           npm run install-locally
 
       - name: Login with geneziobot
-        run: genezio login --token ${{ secrets.GENEZIO_TOKEN }}
+        run: genezio login ${{ secrets.GENEZIO_TOKEN }}
 
       - name: Deploy
         env:
