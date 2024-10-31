@@ -17,6 +17,9 @@ backend:
     deploy:
       - npm install
   # Information about the backend's functions.
+  environment:
+    # The name of the environment variable.
+    MY_SECRET: ${{env.MY_SECRET}}
   functions:
     # The name (label) of the function.
     - name: hello-world-function
