@@ -13,20 +13,25 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
+          # It's required to use NODE_VERSION 20 because the genezio-github-action uses node 20
+          # If you need to change this, build genezio from sources - see `custom_deploy.yml`
           node-version: 20
           cache: 'npm'
 
       - name: Save NODE_VERSION
         run: echo "NODE_VERSION=$(node -v | cut -c 2-)" >> $GITHUB_ENV
 
+      - name: Get latest genezio release tag
+        run: echo "GENEZIO_LATEST_RELEASE=$(curl -s https://api.github.com/repos/genez-io/genezio/releases/latest | jq -r '.tag_name')" >> $GITHUB_ENV
+
       - name: Cache npm binaries to avoid rebuilding genezio
         id: cache-genezio-binary
         uses: actions/cache@v4
         with:
-          path: ${{ runner.tool_cache }}/node/${{env.NODE_VERSION}}
-          key: ${{ runner.os }}-genezio-binary
+          path: ${{ runner.tool_cache }}/node/${{ env.NODE_VERSION }}
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ env.GENEZIO_LATEST_RELEASE }}-genezio-binary
           restore-keys: |
-            ${{ runner.os }}-${{env.NODE_VERSION}}-genezio-binary
+            ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ env.GENEZIO_LATEST_RELEASE }}-genezio-binary
 
 
       - uses: Genez-io/genezio-github-action@v2
