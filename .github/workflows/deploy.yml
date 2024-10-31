@@ -1,9 +1,6 @@
 name: Deploy with genezio installed from npmjs
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
