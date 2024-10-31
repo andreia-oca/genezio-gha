@@ -11,7 +11,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           # It's required to use NODE_VERSION 20 because the genezio-github-action uses node 20
-          # If you need to change this, build genezio from sources - see `custom_deploy.yml`
           node-version: 20
           cache: 'npm'
 

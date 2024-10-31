@@ -14,37 +14,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
-        id: node
-
-      - name: Save NODE_VERSION
-        run: echo "NODE_VERSION=$(node -v | cut -c 2-)" >> $GITHUB_ENV
-
-      - name: Get latest commit sha from github.event.inputs.genezio-branch
-        run: echo "GENEZIO_LATEST_COMMIT_SHA=$(curl -s https://api.github.com/repos/genez-io/genezio/commits/${{ github.event.inputs.genezio-branch }} | jq -r '.sha')" >> $GITHUB_ENV
-
-      - name: Cache genezio binaries to avoid rebuilding genezio
-        id: cache-genezio-binary
-        uses: actions/cache@v4
-        with:
-            path: ${{ runner.tool_cache }}/node/${{ env.NODE_VERSION }}
-            key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ env.GENEZIO_LATEST_COMMIT_SHA }}-genezio-binary
-            restore-keys: |
-                ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ env.GENEZIO_LATEST_COMMIT_SHA }}-genezio-binary
-
-      - name: Cache genezio sources to avoid rebuilding genezio
-        id: cache-genezio-sources
-        uses: actions/cache@v4
-        with:
-            path: genezio
-            key: ${{ runner.os }}-${{ env.GENEZIO_LATEST_COMMIT_SHA }}-genezio-sources
-            restore-keys: |
-                ${{ runner.os }}-${{ env.GENEZIO_LATEST_COMMIT_SHA }}-genezio-source
-
 
       - name: Fetch genezio from repository
-        # if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
         uses: actions/checkout@v4
         with:
           repository: genez-io/genezio
@@ -52,16 +24,10 @@ jobs:
           path: genezio
 
       - name: Build genezio
-        # if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
         working-directory: genezio
         run: |
           npm install
           npm run install-locally
-
-      - name: Investigate
-        run: |
-          which genezio
-          ls -la $(which genezio)
 
       - name: Login with genezio
         run: genezio login ${{ secrets.GENEZIO_TOKEN }}
