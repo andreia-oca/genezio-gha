@@ -24,6 +24,11 @@ jobs:
           repository: genez-io/genezio
           ref: main
           path: genezio
+      - name: Build genezio
+        working-directory: genezio
+        run: |
+          npm install
+          npm run install-locally
 
       - name: Login with geneziobot
         run: genezio login --token ${{ secrets.GENEZIO_TOKEN }}
