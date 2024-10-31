@@ -44,7 +44,7 @@ jobs:
 
 
       - name: Fetch genezio from repository
-        if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
+        # if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
         uses: actions/checkout@v4
         with:
           repository: genez-io/genezio
@@ -52,14 +52,16 @@ jobs:
           path: genezio
 
       - name: Build genezio
-        if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
+        # if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
         working-directory: genezio
         run: |
           npm install
           npm run install-locally
 
       - name: Investigate
-        run: which genezio
+        run: |
+          which genezio
+          ls -la $(which genezio)
 
       - name: Login with genezio
         run: genezio login ${{ secrets.GENEZIO_TOKEN }}
