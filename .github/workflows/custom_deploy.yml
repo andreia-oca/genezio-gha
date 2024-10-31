@@ -2,6 +2,11 @@ name: Deploy with genezio installed from sources
 
 on:
   workflow_dispatch:
+    inputs:
+      genezio-branch:
+        description: 'The branch to use for genezio'
+        required: true
+        default: 'main'
 
 jobs:
   say_hello:
@@ -12,20 +17,38 @@ jobs:
 
       - uses: actions/setup-node@v4
         id: node
-        with:
-          node-version: 20
 
-      - name: Fetch genezio
+      - name: Save NODE_VERSION
+        run: echo "NODE_VERSION=$(node -v | cut -c 2-)" >> $GITHUB_ENV
+
+      - name: Get latest commit sha from github.event.inputs.genezio-branch
+        run: echo "GENEZIO_LATEST_COMMIT_SHA=$(curl -s https://api.github.com/repos/genez-io/genezio/commits/${{ github.event.inputs.genezio-branch }} | jq -r '.sha')" >> $GITHUB_ENV
+
+      - name: Cache npm binaries to avoid rebuilding genezio
+        id: cache-genezio-binary
+        uses: actions/cache@v4
+        with:
+            path: ${{ runner.tool_cache }}/node/${{ env.NODE_VERSION }}
+            key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ env.GENEZIO_LATEST_COMMIT_SHA }}-genezio-binary
+            restore-keys: |
+                ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ env.GENEZIO_LATEST_COMMIT_SHA }}-genezio-binary
+
+      - name: Fetch genezio from repository
+        if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
         uses: actions/checkout@v4
         with:
           repository: genez-io/genezio
-          ref: main
+          ref: ${{ github.event.inputs.genezio-branch }}
           path: genezio
+
       - name: Build genezio
         working-directory: genezio
         run: |
           npm install
           npm run install-locally
+
+      - name: Investigate
+        run: which genezio
 
       - name: Login with geneziobot
         run: genezio login ${{ secrets.GENEZIO_TOKEN }}
