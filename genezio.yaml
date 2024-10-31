@@ -1,5 +1,5 @@
 # The name of the project.
-name: hello-worl
+name: hello-world
 # The region where the project is deployed. Available regions: us-east-1, eu-central-1
 region: us-east-1
 # The version of the Genezio YAML configuration to parse.

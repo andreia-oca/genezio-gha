@@ -12,9 +12,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
+        with:
+          cache: 'npm'
+
+      - name: Save NODE_VERSION
+        run: echo "NODE_VERSION=$(node -v | cut -c 2-)" >> $GITHUB_ENV
+
+      - name: Cache npm binaries to avoid rebuilding genezio
+        id: cache-npm-binaries
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.tool_cache }}/node/${{env.NODE_VERSION}}/x64
+          key: ${{ runner.os }}-npm-binaries
+          restore-keys: |
+            ${{ runner.os }}-npm-binaries
+
       - uses: Genez-io/genezio-github-action@v2
+        if: steps.cache-npm-binaries.outputs.cache-hit != 'true'
         with:
           token: ${{ secrets.GENEZIO_TOKEN }}
+
       - name: Deploy
         env:
           MY_CUSTOM_SECRET: ${{ secrets.MY_CUSTOM_SECRET }}
