@@ -13,32 +13,24 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
+          node-version: 20
           cache: 'npm'
 
       - name: Save NODE_VERSION
         run: echo "NODE_VERSION=$(node -v | cut -c 2-)" >> $GITHUB_ENV
 
       - name: Cache npm binaries to avoid rebuilding genezio
-        id: cache-npm-binaries
+        id: cache-genezio-binary
         uses: actions/cache@v4
         with:
-          path: ${{ runner.tool_cache }}/node/${{env.NODE_VERSION}}/x64
-          key: ${{ runner.os }}-npm-binaries
+          path: ${{ runner.tool_cache }}/node/${{env.NODE_VERSION}}
+          key: ${{ runner.os }}-genezio-binary
           restore-keys: |
-            ${{ runner.os }}-npm-binaries
-
-      - name: Investigate
-        run: |
-          echo "Cache hit: ${{ steps.cache-npm-binaries.outputs.cache-hit }}"
-          ls -la ${{ runner.tool_cache }}/node/
-          ls -la ${{ runner.tool_cache }}/node/${{env.NODE_VERSION}}/x64
-          ls -la ${{ runner.tool_cache }}/node/${{env.NODE_VERSION}}/x64/bin
-          which node
-          which genezio
+            ${{ runner.os }}-${{env.NODE_VERSION}}-genezio-binary
 
 
       - uses: Genez-io/genezio-github-action@v2
-        if: steps.cache-npm-binaries.outputs.cache-hit != 'true'
+        if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
         with:
           token: ${{ secrets.GENEZIO_TOKEN }}
 
