@@ -27,6 +27,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-npm-binaries
 
+      - name: Investigate
+        run: |
+          echo "Cache hit: ${{ steps.cache-npm-binaries.outputs.cache-hit }}"
+          ls -la ${{ runner.tool_cache }}/node/
+          ls -la ${{ runner.tool_cache }}/node/${{env.NODE_VERSION}}/x64
+          ls -lar ${{ runner.tool_cache }}/node/${{env.NODE_VERSION}}/x64
+          which node
+          which genezio
+
+
       - uses: Genez-io/genezio-github-action@v2
         if: steps.cache-npm-binaries.outputs.cache-hit != 'true'
         with:
