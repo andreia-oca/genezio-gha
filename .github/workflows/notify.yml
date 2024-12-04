@@ -1,0 +1,19 @@
+name: Notify
+
+on:
+   workflow_dispatch:
+
+jobs:
+    notify:
+        if: always()
+        runs-on: ubuntu-latest
+        steps:
+            - name: Notify slack
+              uses: slackapi/slack-github-action@v2.0.0
+              with:
+                  method: chat.postMessage
+                  token: ${{ secrets.SLACK_NOTIFICATIONS_BOT_TOKEN }}
+                  payload: |
+                      channel: ${{ secrets.SLACK_CHANNEL_ID }}
+                      text: "TEST"
+                      
