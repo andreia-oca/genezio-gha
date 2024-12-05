@@ -20,4 +20,4 @@ jobs:
                         - type: "section"
                         text:
                             type: "mrkdwn"
-                            text: "*Github Action Build Result:*\n*Repository:* ${{ github.repository }}\n*Branch:* ${{ github.ref }}\n*Workflow:* ${{ github.workflow }}\n*Note: * This will trigger a new build on the build machine
+                            text: "Github Action Build Result"
