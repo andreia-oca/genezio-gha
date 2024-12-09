@@ -38,15 +38,15 @@ jobs:
       # - name: Genezio version
       #   run: genezio --version
 
-      - uses: Genez-io/genezio-github-action@v2
-        # if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
-        with:
-          token: ${{ secrets.GENEZIO_TOKEN }}
+      # - uses: Genez-io/genezio-github-action@v2
+      #   # if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
+      #   with:
+      #     token: ${{ secrets.GENEZIO_TOKEN }}
 
-      - name: Genezio version
-        run: genezio --version
+      # - name: Genezio version
+      #   run: genezio --version
 
-      - uses: Genez-io/genezio-github-action@v3
+      - uses: Genez-io/genezio-github-action@31bfaba1b4fd704797f214ef0c66cd6b3f65d43b
         # if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
         with:
           token: ${{ secrets.GENEZIO_TOKEN }}
