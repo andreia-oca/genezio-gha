@@ -14,28 +14,46 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - name: Save NODE_VERSION
-        run: echo "NODE_VERSION=$(node -v | cut -c 2-)" >> $GITHUB_ENV
+      # - name: Save NODE_VERSION
+      #   run: echo "NODE_VERSION=$(node -v | cut -c 2-)" >> $GITHUB_ENV
 
-      - name: Get latest genezio release tag
-        run: echo "GENEZIO_LATEST_RELEASE=$(curl -s https://api.github.com/repos/genez-io/genezio/releases/latest | jq -r '.tag_name')" >> $GITHUB_ENV
+      # - name: Get latest genezio release tag
+      #   run: echo "GENEZIO_LATEST_RELEASE=$(curl -s https://api.github.com/repos/genez-io/genezio/releases/latest | jq -r '.tag_name')" >> $GITHUB_ENV
 
-      - name: Cache npm binaries to avoid rebuilding genezio
-        id: cache-genezio-binary
-        uses: actions/cache@v4
-        with:
-          path: ${{ runner.tool_cache }}/node/${{ env.NODE_VERSION }}
-          key: ${{ runner.os }}-node-${{ env.NODE_VERSION }}-genezio-${{ env.GENEZIO_LATEST_RELEASE }}-genezio-binary
-          restore-keys: |
-            ${{ runner.os }}-node-${{ env.NODE_VERSION }}-genezio-${{ env.GENEZIO_LATEST_RELEASE }}-genezio-binary
+      # - name: Cache npm binaries to avoid rebuilding genezio
+      #   id: cache-genezio-binary
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: ${{ runner.tool_cache }}/node/${{ env.NODE_VERSION }}
+      #     key: ${{ runner.os }}-node-${{ env.NODE_VERSION }}-genezio-${{ env.GENEZIO_LATEST_RELEASE }}-genezio-binary
+      #     restore-keys: |
+      #       ${{ runner.os }}-node-${{ env.NODE_VERSION }}-genezio-${{ env.GENEZIO_LATEST_RELEASE }}-genezio-binary
 
 
-      - uses: Genez-io/genezio-github-action@v2
-        if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
+      - uses: Genez-io/genezio-github-action@main
+        # if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
         with:
           token: ${{ secrets.GENEZIO_TOKEN }}
 
-      - name: Deploy
-        env:
-          MY_CUSTOM_SECRET: ${{ secrets.MY_CUSTOM_SECRET }}
-        run: MY_SECRET=$MY_CUSTOM_SECRET genezio deploy
+      - name: Genezio version
+        run: genezio --version
+
+      - uses: Genez-io/genezio-github-action@v2
+        # if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
+        with:
+          token: ${{ secrets.GENEZIO_TOKEN }}
+
+      - name: Genezio version
+        run: genezio --version
+
+      - uses: Genez-io/genezio-github-action@v3
+        # if: steps.cache-genezio-binary.outputs.cache-hit != 'true'
+        with:
+          token: ${{ secrets.GENEZIO_TOKEN }}
+
+      - name: Genezio version
+        run: genezio --version
+      # - name: Deploy
+      #   env:
+      #     MY_CUSTOM_SECRET: ${{ secrets.MY_CUSTOM_SECRET }}
+      #   run: MY_SECRET=$MY_CUSTOM_SECRET genezio deploy
