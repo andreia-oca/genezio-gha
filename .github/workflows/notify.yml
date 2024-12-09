@@ -11,8 +11,18 @@ jobs:
             - name: Notify slack
               uses: slackapi/slack-github-action@v2.0.0
               with:
-                  method: chat.postMessage
-                  token: ${{ secrets.SLACK_NOTIFICATIONS_BOT_TOKEN }}
-                  payload: |
-                      channel: ${{ secrets.SLACK_CHANNEL_ID }}
-                      text: "GitHub Action build result: success\n*Github Action Build Result:*\n*Repository:* ${{ github.repository }}\n*Branch:* ${{ github.ref }}\n*Workflow:* ${{ github.workflow }}\n*Note: * This will trigger a new build on the build machine"
+                method: chat.postMessage
+                token: ${{ secrets.SLACK_NOTIFICATIONS_BOT_TOKEN }}
+                payload: |
+                    channel: ${{ secrets.SLACK_CHANNEL_ID }}
+                    text: "GitHub Action build result: success\n"
+                    blocks:
+                        - type: "section"
+                        text:s
+                            type: "mrkdwn"
+                            text: |
+                              *Alert: Github Action FAILED*\n
+                              *Repository:* ${{ github.repository }}\n
+                              *Branch:* ${{ github.ref }}\n
+                              *Workflow:* ${{ github.workflow }}\n
+                              *Note: * This is an automated message from GitHub Actions
